@@ -145,6 +145,31 @@ def create_folium_map(kml_data: Dict, output_file: str = 'prague_map.html'):
         'view': folium.FeatureGroup(name='🌆 Views & Walks', show=True),
     }
     
+    # Build a details panel so descriptions always appear for anyone who can't click markers easily
+    detail_cards = []
+    for placemark in kml_data['placemarks']:
+        style = placemark['style']
+        description = PLACE_DESCRIPTIONS.get(
+            placemark['name'],
+            "A lovely Prague destination with its own special atmosphere."
+        )
+        similar_list = SIMILAR_SPOTS_BY_STYLE.get(style, [])
+        similar_html = ''
+        if similar_list:
+            similar_html = '<p class="detail-similar">Similar: ' + ', '.join(similar_list[:3]) + '</p>'
+        detail_cards.append(
+            f'<div class="detail-card detail-{style}">'
+            f'<h4>{placemark["name"]}</h4>'
+            f'<p>{description}</p>'
+            f'{similar_html}'
+            '</div>'
+        )
+    details_html = '<div class="details-panel">'
+    details_html += '<h2>Prague Highlights</h2>'
+    details_html += ''.join(detail_cards)
+    details_html += '</div>'
+    m.get_root().html.add_child(folium.Element(details_html))
+    
     # Add markers from placemarks with custom HTML popups and flyer-style emoji icons
     for placemark in kml_data['placemarks']:
         style = placemark['style']
@@ -252,6 +277,19 @@ def create_folium_map(kml_data: Dict, output_file: str = 'prague_map.html'):
             box-shadow: 0 10px 30px rgba(117, 86, 131, 0.15);
             animation: pulse 4s ease-in-out infinite;
         }
+        .info-hint {
+            position: fixed;
+            top: 155px;
+            left: 20px;
+            width: 260px;
+            font-size: 12px;
+            color: #45285a;
+            background: rgba(255, 255, 255, 0.94);
+            border-radius: 18px;
+            padding: 12px 14px;
+            z-index: 9998;
+            box-shadow: 0 14px 32px rgba(98, 70, 132, 0.14);
+        }
         .flyer-overlay {
             position: fixed;
             bottom: 100px;
@@ -306,9 +344,58 @@ def create_folium_map(kml_data: Dict, output_file: str = 'prague_map.html'):
             border-radius: 16px;
             box-shadow: 0 18px 40px rgba(0,0,0,0.18);
         }
+        .details-panel {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            width: 300px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            padding: 18px;
+            box-shadow: 0 18px 40px rgba(117, 86, 131, 0.16);
+            z-index: 10000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .details-panel h2 {
+            margin: 0 0 12px 0;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            color: #3d2751;
+        }
+        .detail-card {
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border-radius: 18px;
+            background: rgba(255, 240, 250, 0.95);
+            border: 1px solid rgba(236, 180, 216, 0.45);
+        }
+        .detail-card h4 {
+            margin: 0 0 6px 0;
+            font-size: 14px;
+            color: #4a2d57;
+        }
+        .detail-card p {
+            margin: 0;
+            font-size: 12px;
+            color: #54405c;
+            line-height: 1.4;
+        }
+        .detail-similar {
+            margin-top: 8px;
+            color: #6d4e7f;
+            font-size: 11px;
+            opacity: 0.92;
+        }
+        .detail-cute { background: linear-gradient(135deg, #ffe3f8, #ffd7f0); }
+        .detail-beer { background: linear-gradient(135deg, #edffdb, #d4ffbc); }
+        .detail-food { background: linear-gradient(135deg, #dbf2ff, #b8dfff); }
+        .detail-view { background: linear-gradient(135deg, #fff5d8, #ffd9ae); }
     </style>
     <div class="map-title">Prague with You ❤️🍺</div>
     <div class="flyer-badge">Your cute Prague guide: food, beer, views, love</div>
+    <div class="info-hint">Tap a marker to open its popup — or read the full notes in the right-hand panel.</div>
     <div class="flyer-overlay">
         ✨ Wander together<br>
         🍷 Eat deliciously<br>
