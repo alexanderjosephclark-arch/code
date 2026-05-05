@@ -179,5 +179,47 @@
 
   </Folder>
 
+  <!-- 🌟 MORE RECOMMENDATIONS -->
+  <Folder>
+    <name>🌟 More recommendations</name>
+
+    <Placemark>
+      <name>🍺 Classic pub – U Fleků</name>
+      <styleUrl>#beer</styleUrl>
+      <Point><coordinates>14.4151,50.0874,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🍽️ Historic lunch – U Kroka</name>
+      <styleUrl>#food</styleUrl>
+      <Point><coordinates>14.4242,50.0679,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🌿 Hidden garden – Wallenstein Garden</name>
+      <styleUrl>#view</styleUrl>
+      <Point><coordinates>14.4063,50.0910,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🌇 Hilltop stroll – Petřín Hill</name>
+      <styleUrl>#view</styleUrl>
+      <Point><coordinates>14.3970,50.0832,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🍷 Elegant café – Café Imperial</name>
+      <styleUrl>#food</styleUrl>
+      <Point><coordinates>14.4144,50.0815,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🍺 Local brew – Pivovarský klub</name>
+      <styleUrl>#beer</styleUrl>
+      <Point><coordinates>14.4212,50.0862,0</coordinates></Point>
+    </Placemark>
+
+  </Folder>
+
 </Document>
 </kml>

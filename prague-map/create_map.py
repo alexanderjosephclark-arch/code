@@ -32,6 +32,13 @@ EMOJI_MAP = {
     "view": "📷",
 }
 
+SIMILAR_SPOTS_BY_STYLE = {
+    "cute": ["Wallenstein Garden", "Vrtbovská zahrada", "Kampa Island"],
+    "beer": ["U Fleků", "Pivovarský klub", "Strahov Brewery"],
+    "food": ["Café Imperial", "U Kroka", "Mlýnec"],
+    "view": ["Petřín Hill", "Wallenstein Garden", "Prague Castle"],
+}
+
 PLACE_DESCRIPTIONS = {
     "🏨 Our hotel (start & end)": "Cozy hotel base near the river, perfect for resting between adventures.",
     "✨ Morning wander – Old Town Square": "Historic square with the Astronomical Clock, charming cafes, and street artists.",
@@ -49,6 +56,12 @@ PLACE_DESCRIPTIONS = {
     "🏰 Hidden calm – Vyšehrad": "Historic fortress grounds offering quiet walks and scenic views away from the crowds.",
     "🌿 Quiet walk – Kampa Island": "Island oasis by the river, perfect for a romantic stroll and riverside charm.",
     "🍷 Wine bar date – Vinograf": "Charming wine bar with a curated list of Czech and international wines.",
+    "🍺 Classic pub – U Fleků": "Historic beer hall with strong dark beer and a lively Prague pub atmosphere.",
+    "🍽️ Historic lunch – U Kroka": "A traditional Czech restaurant with hearty comfort food in a cozy setting.",
+    "🌿 Hidden garden – Wallenstein Garden": "A quiet Baroque garden tucked behind Prague Castle, ideal for a peaceful walk.",
+    "🌇 Hilltop stroll – Petřín Hill": "A leafy hill with views, mirror maze, and a romantic funicular ride.",
+    "🍷 Elegant café – Café Imperial": "A grand café with Art Nouveau decor and delicious pastries.",
+    "🍺 Local brew – Pivovarský klub": "A craft beer bar with many taps and a great local beer selection.",
 }
 
 def parse_kml(kml_file: str) -> Dict:
@@ -141,6 +154,12 @@ def create_folium_map(kml_data: Dict, output_file: str = 'prague_map.html'):
             placemark['name'],
             "A lovely Prague destination with its own special atmosphere."
         )
+        similar_list = SIMILAR_SPOTS_BY_STYLE.get(style, [])
+        similar_html = ''
+        if similar_list:
+            similar_html = '<p style="margin: 8px 0 0 0; font-size: 12px; opacity: 0.88; line-height: 1.4;">'
+            similar_html += 'Similar: ' + ', '.join(similar_list[:3])
+            similar_html += '</p>'
         
         # Create fancy HTML popup
         popup_html = f'''
@@ -155,9 +174,10 @@ def create_folium_map(kml_data: Dict, output_file: str = 'prague_map.html'):
             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">
                 Category: {style.title()} · {emoji}
             </p>
+            {similar_html}
         </div>
         '''
-        popup = folium.Popup(popup_html, max_width=260, max_height=180)
+        popup = folium.Popup(popup_html, max_width=260, max_height=200)
         
         icon_html = f'''
         <div class="flyer-marker marker-{style}">
@@ -289,7 +309,14 @@ def create_folium_map(kml_data: Dict, output_file: str = 'prague_map.html'):
     </style>
     <div class="map-title">Prague with You ❤️🍺</div>
     <div class="flyer-badge">Your cute Prague guide: food, beer, views, love</div>
-    <div class="flyer-overlay">✨ Wander together<br>🍷 Eat deliciously<br>🌇 Catch sunset views<br>🍺 Toast under fairy lights</div>
+    <div class="flyer-overlay">
+        ✨ Wander together<br>
+        🍷 Eat deliciously<br>
+        🌇 Catch sunset views<br>
+        🍺 Toast under fairy lights<br><br>
+        🌟 More spots to try:<br>
+        U Fleků · Café Imperial · Petřín Hill
+    </div>
     '''
     m.get_root().html.add_child(folium.Element(title_html))
     
