@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_52e36db1b885dcdf2a58ee68326e871f {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -40; }
+        }
+        .map-title {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 18px 28px;
+            background: radial-gradient(circle at top left, #ffe3f8, #ff9de5);
+            border-radius: 999px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #432d5d;
+            z-index: 9999;
+            box-shadow: 0 18px 40px rgba(255, 102, 204, 0.18);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            animation: float 3.8s ease-in-out infinite;
+            letter-spacing: 0.8px;
+        }
+        .flyer-badge {
+            position: fixed;
+            top: 95px;
+            left: 20px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #fff4e6 0%, #ffb3c6 100%);
+            border-radius: 22px;
+            color: #5a3d62;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 9998;
+            box-shadow: 0 10px 30px rgba(117, 86, 131, 0.15);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        .flyer-overlay {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            width: 220px;
+            line-height: 1.5;
+            font-size: 12px;
+            color: #4b2b6a;
+            z-index: 9998;
+            background: rgba(255,255,255,0.92);
+            border-radius: 24px;
+            padding: 16px 18px;
+            box-shadow: 0 18px 40px rgba(86, 72, 140, 0.12);
+            backdrop-filter: blur(8px);
+        }
+        .flyer-marker {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+            animation: pulse 2.3s ease-in-out infinite;
+        }
+        .marker-cute { background: radial-gradient(circle, #ff9de0, #d674ff); }
+        .marker-beer { background: radial-gradient(circle, #b6ff7d, #32cd32); }
+        .marker-food { background: radial-gradient(circle, #80d4ff, #2b73ff); }
+        .marker-view { background: radial-gradient(circle, #ffd26a, #ff7f50); }
+        .animated-route {
+            stroke-dasharray: 12, 10;
+            animation: dash 4s linear infinite;
+            stroke-linecap: round;
+        }
+        .leaflet-container {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 18px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.18) !important;
+        }
+        .leaflet-popup-tip {
+            background: #ff90cb;
+        }
+        .leaflet-marker-icon {
+            filter: drop-shadow(0 6px 18px rgba(0,0,0,0.2));
+        }
+        .leaflet-control-layers-expanded {
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+        }
+    </style>
+    <div class="map-title">Prague with You ❤️🍺</div>
+    <div class="flyer-badge">Your cute Prague guide: food, beer, views, love</div>
+    <div class="flyer-overlay">✨ Wander together<br>🍷 Eat deliciously<br>🌇 Catch sunset views<br>🍺 Toast under fairy lights</div>
+    
+    
+            <div class="folium-map" id="map_52e36db1b885dcdf2a58ee68326e871f" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_52e36db1b885dcdf2a58ee68326e871f = L.map(
+                "map_52e36db1b885dcdf2a58ee68326e871f",
+                {
+                    center: [50.0755, 14.4378],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 13,
+                    zoomControl: true,
+                    preferCanvas: true,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_826be7818061a1d481d6575b0851ee59 = L.tileLayer(
+                "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca target=\"_blank\" href=\"http://cartodb.com/attributions\"\u003eCartoDB\u003c/a\u003e, CartoDB \u003ca target=\"_blank\" href =\"http://cartodb.com/attributions\"\u003eattributions\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_52e36db1b885dcdf2a58ee68326e871f);
+        
+    
+            var feature_group_6b9c3251dfd8645c8dd305aed2bab933 = L.featureGroup(
+                {}
+            ).addTo(map_52e36db1b885dcdf2a58ee68326e871f);
+        
+    
+            var marker_50609f6f90f8d35abddc7052eab3ccf1 = L.marker(
+                [50.0865, 14.4378],
+                {}
+            ).addTo(feature_group_6b9c3251dfd8645c8dd305aed2bab933);
+        
+    
+            var div_icon_82a78e3d04f226b107179d69e5250c62 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-cute\"\u003e\n            \u003cspan class=\"emoji\"\u003e\u2764\ufe0f\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_50609f6f90f8d35abddc7052eab3ccf1.setIcon(div_icon_82a78e3d04f226b107179d69e5250c62);
+        
+    
+        var popup_162e0cc671229c5dde8fbbee12e364c7 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_a58badd070720b6bd66a1341a2ae35f9 = $(`<div id="html_a58badd070720b6bd66a1341a2ae35f9" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🏨 Our hotel (start & end)</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 Cozy hotel base near the river, perfect for resting between adventures.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Cute · ❤️             </p>         </div>         </div>`)[0];
+                popup_162e0cc671229c5dde8fbbee12e364c7.setContent(html_a58badd070720b6bd66a1341a2ae35f9);
+            
+        
+
+        marker_50609f6f90f8d35abddc7052eab3ccf1.bindPopup(popup_162e0cc671229c5dde8fbbee12e364c7)
+        ;
+
+        
+    
+    
+            marker_50609f6f90f8d35abddc7052eab3ccf1.bindTooltip(
+                `<div>
+                     🏨 Our hotel (start & end)
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_6977aba7e2fb983b00d547ff70facb2c = L.marker(
+                [50.0788, 14.445],
+                {}
+            ).addTo(feature_group_6b9c3251dfd8645c8dd305aed2bab933);
+        
+    
+            var div_icon_5e04d55e4d90c4730fa81e9013ca1c87 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-cute\"\u003e\n            \u003cspan class=\"emoji\"\u003e\u2764\ufe0f\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_6977aba7e2fb983b00d547ff70facb2c.setIcon(div_icon_5e04d55e4d90c4730fa81e9013ca1c87);
+        
+    
+        var popup_55edfe098a58ef93bb78acf2fda14b5e = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_3b5a88622588ea62ce676d270b200590 = $(`<div id="html_3b5a88622588ea62ce676d270b200590" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🌇 Sunset together – Riegrovy Sady</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 A green park with laid-back picnic spots and postcard-perfect sunset views.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Cute · ❤️             </p>         </div>         </div>`)[0];
+                popup_55edfe098a58ef93bb78acf2fda14b5e.setContent(html_3b5a88622588ea62ce676d270b200590);
+            
+        
+
+        marker_6977aba7e2fb983b00d547ff70facb2c.bindPopup(popup_55edfe098a58ef93bb78acf2fda14b5e)
+        ;
+
+        
+    
+    
+            marker_6977aba7e2fb983b00d547ff70facb2c.bindTooltip(
+                `<div>
+                     🌇 Sunset together – Riegrovy Sady
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_f53ab8d9d2a6daacdbb005caf978805b = L.marker(
+                [50.0647, 14.417],
+                {}
+            ).addTo(feature_group_6b9c3251dfd8645c8dd305aed2bab933);
+        
+    
+            var div_icon_d35a2a50813d89dc74a853d76683e258 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-cute\"\u003e\n            \u003cspan class=\"emoji\"\u003e\u2764\ufe0f\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_f53ab8d9d2a6daacdbb005caf978805b.setIcon(div_icon_d35a2a50813d89dc74a853d76683e258);
+        
+    
+        var popup_bd1778328b3dc6c68ce21663cc882fd1 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_85a3826a8041c4c7aae6100b7e4ed5f8 = $(`<div id="html_85a3826a8041c4c7aae6100b7e4ed5f8" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🏰 Hidden calm – Vyšehrad</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 Historic fortress grounds offering quiet walks and scenic views away from the crowds.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Cute · ❤️             </p>         </div>         </div>`)[0];
+                popup_bd1778328b3dc6c68ce21663cc882fd1.setContent(html_85a3826a8041c4c7aae6100b7e4ed5f8);
+            
+        
+
+        marker_f53ab8d9d2a6daacdbb005caf978805b.bindPopup(popup_bd1778328b3dc6c68ce21663cc882fd1)
+        ;
+
+        
+    
+    
+            marker_f53ab8d9d2a6daacdbb005caf978805b.bindTooltip(
+                `<div>
+                     🏰 Hidden calm – Vyšehrad
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_372ae6add4fca2483c9b9d90e58c90d0 = L.marker(
+                [50.0862, 14.4085],
+                {}
+            ).addTo(feature_group_6b9c3251dfd8645c8dd305aed2bab933);
+        
+    
+            var div_icon_dd7cdec21f777a24219b9ba3a0d510ef = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-cute\"\u003e\n            \u003cspan class=\"emoji\"\u003e\u2764\ufe0f\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_372ae6add4fca2483c9b9d90e58c90d0.setIcon(div_icon_dd7cdec21f777a24219b9ba3a0d510ef);
+        
+    
+        var popup_6d7f3cc46782d2d07f666ba1a6aa5893 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_1b4e037a91ca3edb6b2c4ac0d6133629 = $(`<div id="html_1b4e037a91ca3edb6b2c4ac0d6133629" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🌿 Quiet walk – Kampa Island</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 Island oasis by the river, perfect for a romantic stroll and riverside charm.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Cute · ❤️             </p>         </div>         </div>`)[0];
+                popup_6d7f3cc46782d2d07f666ba1a6aa5893.setContent(html_1b4e037a91ca3edb6b2c4ac0d6133629);
+            
+        
+
+        marker_372ae6add4fca2483c9b9d90e58c90d0.bindPopup(popup_6d7f3cc46782d2d07f666ba1a6aa5893)
+        ;
+
+        
+    
+    
+            marker_372ae6add4fca2483c9b9d90e58c90d0.bindTooltip(
+                `<div>
+                     🌿 Quiet walk – Kampa Island
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_69a48a464fe66bf97993c9f6b675f1be = L.marker(
+                [50.0805, 14.4205],
+                {}
+            ).addTo(feature_group_6b9c3251dfd8645c8dd305aed2bab933);
+        
+    
+            var div_icon_1a4193b46430c2aa2edf225743cc5a63 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-cute\"\u003e\n            \u003cspan class=\"emoji\"\u003e\u2764\ufe0f\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_69a48a464fe66bf97993c9f6b675f1be.setIcon(div_icon_1a4193b46430c2aa2edf225743cc5a63);
+        
+    
+        var popup_ac07772822a5211e460258a6288591b1 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_2d5281617eb7fa13abfd0df0c2bb4cc3 = $(`<div id="html_2d5281617eb7fa13abfd0df0c2bb4cc3" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🍷 Wine bar date – Vinograf</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 Charming wine bar with a curated list of Czech and international wines.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Cute · ❤️             </p>         </div>         </div>`)[0];
+                popup_ac07772822a5211e460258a6288591b1.setContent(html_2d5281617eb7fa13abfd0df0c2bb4cc3);
+            
+        
+
+        marker_69a48a464fe66bf97993c9f6b675f1be.bindPopup(popup_ac07772822a5211e460258a6288591b1)
+        ;
+
+        
+    
+    
+            marker_69a48a464fe66bf97993c9f6b675f1be.bindTooltip(
+                `<div>
+                     🍷 Wine bar date – Vinograf
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var feature_group_2d5a68344c93d75f7644534065da9e4d = L.featureGroup(
+                {}
+            ).addTo(map_52e36db1b885dcdf2a58ee68326e871f);
+        
+    
+            var marker_867694e0453625c20d9232d8254de794 = L.marker(
+                [50.0908, 14.4239],
+                {}
+            ).addTo(feature_group_2d5a68344c93d75f7644534065da9e4d);
+        
+    
+            var div_icon_2dfc566f81e8ef2debe7c1a9be8e1676 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-beer\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83c\udf7a\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_867694e0453625c20d9232d8254de794.setIcon(div_icon_2dfc566f81e8ef2debe7c1a9be8e1676);
+        
+    
+        var popup_54dc0f8b270a94ebfc38e28b347b6986 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_81a9c610233930fb0731a68027ded481 = $(`<div id="html_81a9c610233930fb0731a68027ded481" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🍺 First drink – Lokál</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 A popular beer hall with classic Czech lager and a friendly local atmosphere.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Beer · 🍺             </p>         </div>         </div>`)[0];
+                popup_54dc0f8b270a94ebfc38e28b347b6986.setContent(html_81a9c610233930fb0731a68027ded481);
+            
+        
+
+        marker_867694e0453625c20d9232d8254de794.bindPopup(popup_54dc0f8b270a94ebfc38e28b347b6986)
+        ;
+
+        
+    
+    
+            marker_867694e0453625c20d9232d8254de794.bindTooltip(
+                `<div>
+                     🍺 First drink – Lokál
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_6bba622789cc403bd58ba1e244abc87c = L.marker(
+                [50.0787, 14.4305],
+                {}
+            ).addTo(feature_group_2d5a68344c93d75f7644534065da9e4d);
+        
+    
+            var div_icon_7f5b70cb54f0c8ef47f78ffbc17e16ae = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-beer\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83c\udf7a\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_6bba622789cc403bd58ba1e244abc87c.setIcon(div_icon_7f5b70cb54f0c8ef47f78ffbc17e16ae);
+        
+    
+        var popup_ed974facde6657c0ffc411aee61f20ca = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_399ee6e65f72c15d2eeb9e316fac7077 = $(`<div id="html_399ee6e65f72c15d2eeb9e316fac7077" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🍺 Craft beers – BeerGeek</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 A craft beer bar with a rotating tap list and a relaxed vibe.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Beer · 🍺             </p>         </div>         </div>`)[0];
+                popup_ed974facde6657c0ffc411aee61f20ca.setContent(html_399ee6e65f72c15d2eeb9e316fac7077);
+            
+        
+
+        marker_6bba622789cc403bd58ba1e244abc87c.bindPopup(popup_ed974facde6657c0ffc411aee61f20ca)
+        ;
+
+        
+    
+    
+            marker_6bba622789cc403bd58ba1e244abc87c.bindTooltip(
+                `<div>
+                     🍺 Craft beers – BeerGeek
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_227fd30ee598b9f9b5e70c41e3790a72 = L.marker(
+                [50.0775, 14.427],
+                {}
+            ).addTo(feature_group_2d5a68344c93d75f7644534065da9e4d);
+        
+    
+            var div_icon_dd8e1ff97aac1515496891f289f51d8c = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-beer\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83c\udf7a\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_227fd30ee598b9f9b5e70c41e3790a72.setIcon(div_icon_dd8e1ff97aac1515496891f289f51d8c);
+        
+    
+        var popup_8c0292801b68099d9f724f80a83fb93a = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_5af7094d69c074fc2938dcfefb5d73ee = $(`<div id="html_5af7094d69c074fc2938dcfefb5d73ee" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🍺 Something different – Bad Flash</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 An eclectic bar known for creative drinks and a fun, neon-lit scene.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Beer · 🍺             </p>         </div>         </div>`)[0];
+                popup_8c0292801b68099d9f724f80a83fb93a.setContent(html_5af7094d69c074fc2938dcfefb5d73ee);
+            
+        
+
+        marker_227fd30ee598b9f9b5e70c41e3790a72.bindPopup(popup_8c0292801b68099d9f724f80a83fb93a)
+        ;
+
+        
+    
+    
+            marker_227fd30ee598b9f9b5e70c41e3790a72.bindTooltip(
+                `<div>
+                     🍺 Something different – Bad Flash
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var feature_group_aa3970403cbefba6e7160125a07e415a = L.featureGroup(
+                {}
+            ).addTo(map_52e36db1b885dcdf2a58ee68326e871f);
+        
+    
+            var marker_847c0e3a591ee8d3dbb3676d3d86a624 = L.marker(
+                [50.0902, 14.4235],
+                {}
+            ).addTo(feature_group_aa3970403cbefba6e7160125a07e415a);
+        
+    
+            var div_icon_bf371384bfc47588389fa1e11623b1d2 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-food\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83c\udf7d\ufe0f\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_847c0e3a591ee8d3dbb3676d3d86a624.setIcon(div_icon_bf371384bfc47588389fa1e11623b1d2);
+        
+    
+        var popup_abb88e2fe236d4a3427ff5d7997d1c57 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_de0572be033dc649c6e48bafbdb6de67 = $(`<div id="html_de0572be033dc649c6e48bafbdb6de67" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🍖 Quick bite – Naše maso</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 A top spot for fresh Czech sausages and a delicious meat-lover's lunch.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Food · 🍽️             </p>         </div>         </div>`)[0];
+                popup_abb88e2fe236d4a3427ff5d7997d1c57.setContent(html_de0572be033dc649c6e48bafbdb6de67);
+            
+        
+
+        marker_847c0e3a591ee8d3dbb3676d3d86a624.bindPopup(popup_abb88e2fe236d4a3427ff5d7997d1c57)
+        ;
+
+        
+    
+    
+            marker_847c0e3a591ee8d3dbb3676d3d86a624.bindTooltip(
+                `<div>
+                     🍖 Quick bite – Naše maso
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_39dfdd5856705978e9866e000f2a7b9e = L.marker(
+                [50.0925, 14.451],
+                {}
+            ).addTo(feature_group_aa3970403cbefba6e7160125a07e415a);
+        
+    
+            var div_icon_e0d8b45c1de2f836088efe6d07a614e9 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-food\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83c\udf7d\ufe0f\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_39dfdd5856705978e9866e000f2a7b9e.setIcon(div_icon_e0d8b45c1de2f836088efe6d07a614e9);
+        
+    
+        var popup_3eb763733546263493a7ee90b979d046 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_254eafd11e1c65dc08115a90ea3513e8 = $(`<div id="html_254eafd11e1c65dc08115a90ea3513e8" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🍷 Nice dinner – Eska</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 Modern Czech restaurant with a creative menu in a stylish industrial space.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Food · 🍽️             </p>         </div>         </div>`)[0];
+                popup_3eb763733546263493a7ee90b979d046.setContent(html_254eafd11e1c65dc08115a90ea3513e8);
+            
+        
+
+        marker_39dfdd5856705978e9866e000f2a7b9e.bindPopup(popup_3eb763733546263493a7ee90b979d046)
+        ;
+
+        
+    
+    
+            marker_39dfdd5856705978e9866e000f2a7b9e.bindTooltip(
+                `<div>
+                     🍷 Nice dinner – Eska
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_ccd6db66c99fb3697b40e9bb19cafa6c = L.marker(
+                [50.0839, 14.4313],
+                {}
+            ).addTo(feature_group_aa3970403cbefba6e7160125a07e415a);
+        
+    
+            var div_icon_89d777dfb4b42d7828c8e7238c0ad686 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-food\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83c\udf7d\ufe0f\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_ccd6db66c99fb3697b40e9bb19cafa6c.setIcon(div_icon_89d777dfb4b42d7828c8e7238c0ad686);
+        
+    
+        var popup_2d0bbb6949d0a823e23c0a0b49ae8d4c = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_764269e0cd6b7d397b440d2637f35046 = $(`<div id="html_764269e0cd6b7d397b440d2637f35046" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🍽️ Cozy food stop – Kantýna</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 A meat-focused dining hall offering hearty local dishes in a cozy setting.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Food · 🍽️             </p>         </div>         </div>`)[0];
+                popup_2d0bbb6949d0a823e23c0a0b49ae8d4c.setContent(html_764269e0cd6b7d397b440d2637f35046);
+            
+        
+
+        marker_ccd6db66c99fb3697b40e9bb19cafa6c.bindPopup(popup_2d0bbb6949d0a823e23c0a0b49ae8d4c)
+        ;
+
+        
+    
+    
+            marker_ccd6db66c99fb3697b40e9bb19cafa6c.bindTooltip(
+                `<div>
+                     🍽️ Cozy food stop – Kantýna
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_83ddc0d6e210806b493f42abd12376ce = L.marker(
+                [50.0755, 14.4066],
+                {}
+            ).addTo(feature_group_aa3970403cbefba6e7160125a07e415a);
+        
+    
+            var div_icon_2971fe1b16d38971fbeeebda1ff9a39a = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-food\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83c\udf7d\ufe0f\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_83ddc0d6e210806b493f42abd12376ce.setIcon(div_icon_2971fe1b16d38971fbeeebda1ff9a39a);
+        
+    
+        var popup_8ed7fc28ab8895bb6b3964d7dc0c7d60 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_c7aaf979501240765612f1355924f353 = $(`<div id="html_c7aaf979501240765612f1355924f353" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🥐 Slow morning – Café Savoy</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 Classic café with elegant interiors, great coffee, and pastries for breakfast.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: Food · 🍽️             </p>         </div>         </div>`)[0];
+                popup_8ed7fc28ab8895bb6b3964d7dc0c7d60.setContent(html_c7aaf979501240765612f1355924f353);
+            
+        
+
+        marker_83ddc0d6e210806b493f42abd12376ce.bindPopup(popup_8ed7fc28ab8895bb6b3964d7dc0c7d60)
+        ;
+
+        
+    
+    
+            marker_83ddc0d6e210806b493f42abd12376ce.bindTooltip(
+                `<div>
+                     🥐 Slow morning – Café Savoy
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var feature_group_dd48b91924e2297f0027c4dd6e37a89a = L.featureGroup(
+                {}
+            ).addTo(map_52e36db1b885dcdf2a58ee68326e871f);
+        
+    
+            var marker_c13be90c25e9557ee8428567def66f5a = L.marker(
+                [50.087, 14.4208],
+                {}
+            ).addTo(feature_group_dd48b91924e2297f0027c4dd6e37a89a);
+        
+    
+            var div_icon_68d74740bac0fdb6d969d1cb9f39936c = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-view\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83d\udcf7\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_c13be90c25e9557ee8428567def66f5a.setIcon(div_icon_68d74740bac0fdb6d969d1cb9f39936c);
+        
+    
+        var popup_18232e9798a6cda218f955ff825c6f9f = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_9d42d10a5721f7e204b27a0e7d136af2 = $(`<div id="html_9d42d10a5721f7e204b27a0e7d136af2" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">✨ Morning wander – Old Town Square</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 Historic square with the Astronomical Clock, charming cafes, and street artists.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: View · 📷             </p>         </div>         </div>`)[0];
+                popup_18232e9798a6cda218f955ff825c6f9f.setContent(html_9d42d10a5721f7e204b27a0e7d136af2);
+            
+        
+
+        marker_c13be90c25e9557ee8428567def66f5a.bindPopup(popup_18232e9798a6cda218f955ff825c6f9f)
+        ;
+
+        
+    
+    
+            marker_c13be90c25e9557ee8428567def66f5a.bindTooltip(
+                `<div>
+                     ✨ Morning wander – Old Town Square
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_fc3562414a01f816f10ad739f07b9673 = L.marker(
+                [50.0865, 14.4114],
+                {}
+            ).addTo(feature_group_dd48b91924e2297f0027c4dd6e37a89a);
+        
+    
+            var div_icon_b25c45c2a0c0b1ad3be1c437ba105dc8 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-view\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83d\udcf7\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_fc3562414a01f816f10ad739f07b9673.setIcon(div_icon_b25c45c2a0c0b1ad3be1c437ba105dc8);
+        
+    
+        var popup_915556315705d963b42a20789f63bd50 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_cfc7e140d3213e6420208289975aed10 = $(`<div id="html_cfc7e140d3213e6420208289975aed10" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🌉 Slow walk – Charles Bridge</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 One of Prague's most famous bridges, lined with statues and romantic river views.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: View · 📷             </p>         </div>         </div>`)[0];
+                popup_915556315705d963b42a20789f63bd50.setContent(html_cfc7e140d3213e6420208289975aed10);
+            
+        
+
+        marker_fc3562414a01f816f10ad739f07b9673.bindPopup(popup_915556315705d963b42a20789f63bd50)
+        ;
+
+        
+    
+    
+            marker_fc3562414a01f816f10ad739f07b9673.bindTooltip(
+                `<div>
+                     🌉 Slow walk – Charles Bridge
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_192e728733a5abbc5553ef8605256cc0 = L.marker(
+                [50.09, 14.4005],
+                {}
+            ).addTo(feature_group_dd48b91924e2297f0027c4dd6e37a89a);
+        
+    
+            var div_icon_2e9265a8bfdf8875fcc07b2407479cfc = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-view\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83d\udcf7\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_192e728733a5abbc5553ef8605256cc0.setIcon(div_icon_2e9265a8bfdf8875fcc07b2407479cfc);
+        
+    
+        var popup_389a5ec49ee9aabf3866ff1662409aa7 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_14ca1e031cb4f0235ffebe78c384b653 = $(`<div id="html_14ca1e031cb4f0235ffebe78c384b653" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🏰 Exploring views – Prague Castle</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 A majestic hilltop castle complex with sweeping city panoramas.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: View · 📷             </p>         </div>         </div>`)[0];
+                popup_389a5ec49ee9aabf3866ff1662409aa7.setContent(html_14ca1e031cb4f0235ffebe78c384b653);
+            
+        
+
+        marker_192e728733a5abbc5553ef8605256cc0.bindPopup(popup_389a5ec49ee9aabf3866ff1662409aa7)
+        ;
+
+        
+    
+    
+            marker_192e728733a5abbc5553ef8605256cc0.bindTooltip(
+                `<div>
+                     🏰 Exploring views – Prague Castle
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_cec8b08814b0eae44dcd0a66bf9e7a46 = L.marker(
+                [50.0989, 14.4175],
+                {}
+            ).addTo(feature_group_dd48b91924e2297f0027c4dd6e37a89a);
+        
+    
+            var div_icon_6fbcf2fcd178473a175f278d13e80ca1 = L.divIcon({"className": "", "html": "\n        \u003cdiv class=\"flyer-marker marker-view\"\u003e\n            \u003cspan class=\"emoji\"\u003e\ud83d\udcf7\u003c/span\u003e\n        \u003c/div\u003e\n        ", "iconAnchor": [24, 24], "iconSize": [48, 48]});
+            marker_cec8b08814b0eae44dcd0a66bf9e7a46.setIcon(div_icon_6fbcf2fcd178473a175f278d13e80ca1);
+        
+    
+        var popup_d49ffa91f4c32915900590c2cf9b3512 = L.popup({"maxHeight": 180, "maxWidth": 260});
+
+        
+            
+                var html_1b25059fdd2d5199cf8e4533ba10bdb8 = $(`<div id="html_1b25059fdd2d5199cf8e4533ba10bdb8" style="width: 100.0%; height: 100.0%;">         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                     padding: 16px 18px; min-width: 220px; border-radius: 18px;                     background: linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%);                     color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.18);">             <h3 style="margin: 0 0 8px 0; font-size: 17px; letter-spacing: 0.5px;">🌇 Sunset moment – Letná Park</h3>             <p style="margin: 0; font-size: 13px; opacity: 0.95; line-height: 1.4;">                 A peaceful park with the best sunset views over the city and river.             </p>             <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.85;">                 Category: View · 📷             </p>         </div>         </div>`)[0];
+                popup_d49ffa91f4c32915900590c2cf9b3512.setContent(html_1b25059fdd2d5199cf8e4533ba10bdb8);
+            
+        
+
+        marker_cec8b08814b0eae44dcd0a66bf9e7a46.bindPopup(popup_d49ffa91f4c32915900590c2cf9b3512)
+        ;
+
+        
+    
+    
+            marker_cec8b08814b0eae44dcd0a66bf9e7a46.bindTooltip(
+                `<div>
+                     🌇 Sunset moment – Letná Park
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var layer_control_ca200d1e7f2018d5ac8789dfb9db2b2b = {
+                base_layers : {
+                    "cartodbpositron" : tile_layer_826be7818061a1d481d6575b0851ee59,
+                },
+                overlays :  {
+                    "\u2764\ufe0f Romantic Spots" : feature_group_6b9c3251dfd8645c8dd305aed2bab933,
+                    "\ud83c\udf7a Beer \u0026 Nightlife" : feature_group_2d5a68344c93d75f7644534065da9e4d,
+                    "\ud83c\udf7d\ufe0f Food" : feature_group_aa3970403cbefba6e7160125a07e415a,
+                    "\ud83c\udf06 Views \u0026 Walks" : feature_group_dd48b91924e2297f0027c4dd6e37a89a,
+                },
+            };
+            L.control.layers(
+                layer_control_ca200d1e7f2018d5ac8789dfb9db2b2b.base_layers,
+                layer_control_ca200d1e7f2018d5ac8789dfb9db2b2b.overlays,
+                {"autoZIndex": true, "collapsed": false, "position": "topright"}
+            ).addTo(map_52e36db1b885dcdf2a58ee68326e871f);
+        
+</script>
+</html>

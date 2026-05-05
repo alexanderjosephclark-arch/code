@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>Prague with You ❤️🍺</name>
+
+  <!-- STYLE (soft + simple) -->
+  <Style id="cute">
+    <IconStyle>
+      <color>ffcc66ff</color>
+      <scale>1.2</scale>
+    </IconStyle>
+  </Style>
+
+  <Style id="beer">
+    <IconStyle>
+      <color>ff00ff00</color>
+      <scale>1.1</scale>
+    </IconStyle>
+  </Style>
+
+  <Style id="food">
+    <IconStyle>
+      <color>ff0000ff</color>
+      <scale>1.1</scale>
+    </IconStyle>
+  </Style>
+
+  <Style id="view">
+    <IconStyle>
+      <color>ffffaa00</color>
+      <scale>1.1</scale>
+    </IconStyle>
+  </Style>
+
+  <Style id="route">
+    <LineStyle>
+      <color>ffcc66ff</color>
+      <width>4</width>
+    </LineStyle>
+  </Style>
+
+  <!-- 🏨 BASE -->
+  <Folder>
+    <name>🏨 Home Base</name>
+
+    <Placemark>
+      <name>🏨 Our hotel (start &amp; end)</name>
+      <styleUrl>#cute</styleUrl>
+      <Point>
+        <coordinates>14.4378,50.0865,0</coordinates>
+      </Point>
+    </Placemark>
+  </Folder>
+
+  <!-- 🌆 DAY WALK -->
+  <Folder>
+    <name>🌆 Day together</name>
+
+    <Placemark>
+      <name>✨ Morning wander – Old Town Square</name>
+      <styleUrl>#view</styleUrl>
+      <Point><coordinates>14.4208,50.0870,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🌉 Slow walk – Charles Bridge</name>
+      <styleUrl>#view</styleUrl>
+      <Point><coordinates>14.4114,50.0865,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🏰 Exploring views – Prague Castle</name>
+      <styleUrl>#view</styleUrl>
+      <Point><coordinates>14.4005,50.0900,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🌇 Sunset moment – Letná Park</name>
+      <styleUrl>#view</styleUrl>
+      <Point><coordinates>14.4175,50.0989,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>Route we'll wander together</name>
+      <styleUrl>#route</styleUrl>
+      <LineString>
+        <coordinates>
+          14.4208,50.0870,0
+          14.4114,50.0865,0
+          14.4005,50.0900,0
+          14.4175,50.0989,0
+        </coordinates>
+      </LineString>
+    </Placemark>
+
+  </Folder>
+
+  <!-- 🍽️ FOOD -->
+  <Folder>
+    <name>🍽️ Food we'll probably love</name>
+
+    <Placemark>
+      <name>🍖 Quick bite – Naše maso</name>
+      <styleUrl>#food</styleUrl>
+      <Point><coordinates>14.4235,50.0902,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🍷 Nice dinner – Eska</name>
+      <styleUrl>#food</styleUrl>
+      <Point><coordinates>14.4510,50.0925,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🍽️ Cozy food stop – Kantýna</name>
+      <styleUrl>#food</styleUrl>
+      <Point><coordinates>14.4313,50.0839,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🥐 Slow morning – Café Savoy</name>
+      <styleUrl>#food</styleUrl>
+      <Point><coordinates>14.4066,50.0755,0</coordinates></Point>
+    </Placemark>
+
+  </Folder>
+
+  <!-- 🍺 NIGHT -->
+  <Folder>
+    <name>🍺 Night together</name>
+
+    <Placemark>
+      <name>🍺 First drink – Lokál</name>
+      <styleUrl>#beer</styleUrl>
+      <Point><coordinates>14.4239,50.0908,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🍺 Craft beers – BeerGeek</name>
+      <styleUrl>#beer</styleUrl>
+      <Point><coordinates>14.4305,50.0787,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🍺 Something different – Bad Flash</name>
+      <styleUrl>#beer</styleUrl>
+      <Point><coordinates>14.4270,50.0775,0</coordinates></Point>
+    </Placemark>
+
+  </Folder>
+
+  <!-- ❤️ ROMANTIC -->
+  <Folder>
+    <name>❤️ Quiet &amp; romantic moments</name>
+
+    <Placemark>
+      <name>🌇 Sunset together – Riegrovy Sady</name>
+      <styleUrl>#cute</styleUrl>
+      <Point><coordinates>14.4450,50.0788,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🏰 Hidden calm – Vyšehrad</name>
+      <styleUrl>#cute</styleUrl>
+      <Point><coordinates>14.4170,50.0647,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🌿 Quiet walk – Kampa Island</name>
+      <styleUrl>#cute</styleUrl>
+      <Point><coordinates>14.4085,50.0862,0</coordinates></Point>
+    </Placemark>
+
+    <Placemark>
+      <name>🍷 Wine bar date – Vinograf</name>
+      <styleUrl>#cute</styleUrl>
+      <Point><coordinates>14.4205,50.0805,0</coordinates></Point>
+    </Placemark>
+
+  </Folder>
+
+</Document>
+</kml>
